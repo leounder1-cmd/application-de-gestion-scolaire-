@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saint Paul Pro - logiciel de gesstion scoaire version 1.0</title>
+  <style>
+    :root {
+      --bg1: #eff6ff;
+      --bg2: #eef2ff;
+      --dark: #0f172a;
+      --dark-2: #111827;
+      --slate: #334155;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --card: rgba(255,255,255,.92);
+      --white: #fff;
+      --primary: #2563eb;
+      --primary-2: #1d4ed8;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --purple: #7c3aed;
+      --shadow: 0 18px 40px rgba(15,23,42,.12);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--dark);
+      background: linear-gradient(135deg, var(--bg1) 0%, #f8fafc 45%, var(--bg2) 100%);
+    }
+    .app { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+    .sidebar {
+      background: linear-gradient(180deg, #0f172a, #111827);
+      color: #fff;
+      padding: 22px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .brand-logo {
+      width: 46px; height: 46px; border-radius: 14px;
+      background: linear-gradient(135deg, #60a5fa, #4f46e5);
+      display: grid; place-items: center; font-weight: 800; box-shadow: 0 10px 22px rgba(96,165,250,.35);
+    }
+    .brand h1 { margin: 0; font-size: 1.1rem; }
+    .brand small { color: #cbd5e1; }
+    .user-box {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+    .user-box strong { display: block; margin-bottom: 6px; }
+    .nav-title {
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .14em; color: #94a3b8; margin: 18px 10px 8px;
+    }
+    .nav-btn {
+      width: 100%; border: 0; background: transparent; color: #e5e7eb; cursor: pointer;
+      text-align: left; padding: 12px 14px; border-radius: 12px; font-size: .95rem; margin-bottom: 8px; transition: .2s ease;
+    }
+    .nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,.1); color: #fff; }
+    .nav-btn.hidden-role { display: none; }
+    .content { padding: 28px; }
+    .topbar { display: flex; justify-content: space-between; align-items: stretch; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+    .hero {
+      flex: 1; min-width: 280px; color: #fff; border-radius: 26px; padding: 26px;
+      background: linear-gradient(135deg, var(--primary-2), var(--purple)); box-shadow: var(--shadow);
+    }
+    .hero h2 { margin: 0 0 10px; font-size: 1.8rem; }
+    .hero p { margin: 0; color: #dbeafe; max-width: 760px; }
+    .hero-meta {
+      display: inline-flex; gap: 8px; align-items: center; margin-top: 14px;
+      background: rgba(255,255,255,.14); padding: 8px 12px; border-radius: 999px; font-size: .9rem;
+    }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 0; border-radius: 12px; padding: 11px 14px; cursor: pointer; font-weight: 700; transition: .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-2); }
+    .btn-secondary { background: #fff; color: var(--dark); border: 1px solid var(--line); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-ghost { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.15); }
+    .grid-4, .grid-3, .grid-2 { display: grid; gap: 18px; }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .card {
+      background: var(--card); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.55);
+      border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
+    }
+    .section-header { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; margin: 22px 0 14px; }
+    .section-header h3 { margin: 0; font-size: 1.18rem; }
+    .section-header p { margin: 4px 0 0; color: var(--muted); }
+    .panel-title { margin: 0 0 14px; font-size: 1.02rem; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-box { min-width: 220px; max-width: 360px; flex: 1; }
+    .input, select, textarea {
+      width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #dbe3ee; background: #fff; font: inherit;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .stat-card .label { color: var(--muted); font-size: .9rem; }
+    .stat-card .value { font-size: 1.8rem; font-weight: 800; margin-top: 8px; }
+    .stat-card .meta { margin-top: 8px; font-size: .9rem; }
+    .positive { color: var(--success); }
+    .warning { color: var(--warning); }
+    .danger { color: var(--danger); }
+    .muted { color: var(--muted); }
+    .list { display: grid; gap: 12px; }
+    .list-item { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    .list-item strong { display: block; margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; }
+    th, td { text-align: left; padding: 13px 12px; border-bottom: 1px solid #eef2f7; vertical-align: top; }
+    th { background: #f8fafc; text-transform: uppercase; font-size: .8rem; letter-spacing: .05em; color: var(--slate); }
+    tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 6px 10px; border-radius: 999px; font-size: .8rem; font-weight: 800; }
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-info { background: #dbeafe; color: #1d4ed8; }
+    .badge-purple { background: #ede9fe; color: #6d28d9; }
+    .view.hidden { display: none !important; }
+    .hidden { display: none !important; }
+    .login-overlay {
+      position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a, #1d4ed8); z-index: 100;
+      display: grid; place-items: center; padding: 18px;
+    }
+    .login-card {
+      width: min(520px, 100%); background: rgba(255,255,255,.97); border-radius: 26px; padding: 26px; box-shadow: 0 30px 90px rgba(0,0,0,.28);
+    }
+    .tabs { display: inline-flex; background: #eef2ff; border-radius: 999px; padding: 4px; margin-bottom: 16px; }
+    .tab-btn { border: 0; background: transparent; padding: 10px 14px; border-radius: 999px; cursor: pointer; font-weight: 700; }
+    .tab-btn.active { background: #fff; box-shadow: 0 4px 12px rgba(15,23,42,.08); }
+    .modal {
+      position: fixed; inset: 0; background: rgba(15,23,42,.55); display: grid; place-items: center; padding: 20px; z-index: 120;
+    }
+    .modal-card {
+      width: min(920px, 100%); max-height: 92vh; overflow-y: auto; background: #fff; border-radius: 22px; padding: 20px; box-shadow: 0 30px 80px rgba(15,23,42,.22);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .close-btn { width: 40px; height: 40px; border-radius: 999px; border: 0; cursor: pointer; background: #f1f5f9; font-size: 1.1rem; }
+    .pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .info-note {
+      background: #eef2ff; color: #3730a3; border-radius: 14px; padding: 12px 14px; font-size: .92rem;
+    }
+    .footer-note {
+      background: rgba(255,255,255,.08); color: #e2e8f0; border-radius: 14px; padding: 14px; margin-top: 18px; font-size: .9rem;
+    }
+    .kpi {
+      width: 82px; height: 82px; border-radius: 50%; display: grid; place-items: center;
+      background: conic-gradient(var(--primary) 0 82%, #e2e8f0 82% 100%); margin: 0 auto 10px;
+    }
+    .kpi span { width: 58px; height: 58px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-weight: 800; color: var(--primary); }
+    .text-right { text-align: right; }
+    .w-full { width: 100%; }
+    @media (max-width: 1150px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 720px) {
+      .content { padding: 18px; }
+      .grid-4, .grid-3, .grid-2, .form-grid { grid-template-columns: 1fr; }
+      table, thead, tbody, tr, th, td { display: block; }
+      thead { display: none; }
+      tr { border-bottom: 1px solid var(--line); padding: 8px 0; }
+      td { padding: 8px 0; border-bottom: 0; }
+      td::before {
+        content: attr(data-label); display: block; font-size: .72rem; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <div class="brand" style="color:#0f172a; margin-bottom: 10px;">
+        <div class="brand-logo">S P</div>
+        <div>
+          <h1 style="margin:0; color:#0f172a;">LOGICIEL DE GESTION SCOLAIRE PROPRE POUR SAINT PAUL DE KOLWEZI Version 1</h1>
+          <small style="color:#64748b;">LOGICIEL DE GESTION SCOLAIRE avec comptes, rôles et CRUD complet propre pour saint PAUL DE KOLWEZI</small>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Connexion</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Créer un compte</button>
+      </div>
+
+      <div id="loginPane">
+        <h2 style="margin-top:0;">Connexion sécurisée</h2>
+        <p class="muted">Accès administrateur, utilisateur simple, et création de comptes pour les membres (Parents, eleves, en général utilisateur simple).</p>
+        <div class="form-grid">
+          <div>
+            <label>Email</label>
+            <input id="loginEmail" class="input" value="admin@edupilot.fr" />
+          </div>
+          <div>
+            <label>Mot de passe</label>
+            <input id="loginPassword" type="password" class="input" value="admin123" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="login()">Se connecter</button>
+        </div>
+        <div class="info-note">
+
+        </div>
+        
+        
+      </div>
+
+      <div id="registerPane" class="hidden">
+        <h2 style="margin-top:0;">Création de compte</h2>
+        <p class="muted">Nouveau compte utilisateur simple avec espace personnel.</p>
+        <div class="form-grid">
+          <div>
+            <label>Nom complet</label>
+            <input id="regName" class="input" placeholder="votre nom complet" />
+          </div>
+          <div>
+            <label>Email</label>
+            <input id="regEmail" class="input" placeholder="nom@email.com" />
+          </div>
+          <div>
+            <label>Mot de passe</label>
+            <input id="regPassword" type="password" class="input" placeholder="Mot de passe" />
+          </div>
+          <div>
+            <label>Type de compte</label>
+            <select id="regRole">
+              <option value="user">Utilisateur simple</option>
+              <option value="teacher">Enseignant</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="registerUser()">Créer le compte</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SP</div>
+        <div>
+          <h1>Saint Paul</h1>
+          <small>Administration + utilisateur</small>
+        </div>
+      </div>
+
+      <div class="user-box">
+        <strong id="sidebarUserName">Non connecté</strong>
+        <div id="sidebarUserRole" class="muted" style="color:#cbd5e1;">Rôle</div>
+        <div class="pill-row" style="margin-top:10px;">
+          <span class="badge badge-info" id="sidebarRoleBadge">Session</span>
+        </div>
+      </div>
+
+      <div class="nav-title">Navigation</div>
+      <button class="nav-btn active" data-view="dashboard">🏠 Tableau de bord</button>
+      <button class="nav-btn" data-view="students">🎓 Élèves</button>
+      <button class="nav-btn admin-only" data-view="teachers">👩‍🏫 Enseignants</button>
+      <button class="nav-btn" data-view="classes">🏫 Classes</button>
+      <button class="nav-btn admin-only" data-view="attendance">🕘 Présences</button>
+      <button class="nav-btn admin-only" data-view="finance">💳 Finances</button>
+      <button class="nav-btn" data-view="messages">💬 Messages</button>
+      <button class="nav-btn admin-only" data-view="users">👥 Utilisateurs</button>
+      <button class="nav-btn admin-only" data-view="remote">🛰️ Supervision distante</button>
+      <button class="nav-btn" data-view="profile">🙍 Mon compte</button>
+      <button class="nav-btn admin-only" data-view="settings">⚙️ Paramètres</button>
+
+      <div class="nav-title">Actions</div>
+      <button class="nav-btn" onclick="exportData()">📤 Exporter les données</button>
+      <button class="nav-btn admin-only" onclick="resetDemo()">♻️ Réinitialiser</button>
+      <button class="nav-btn" onclick="logout()">🚪 Déconnexion</button>
+
+      <div class="footer-note">
+        <strong>Fonctions incluses</strong><br>
+        Comptes, rôles, création de compte, gestion administrative et CRUD sur toutes les principales données.
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="topbar">
+        <div class="hero">
+          <h2>LOGICIEL DE GESTION SCOLAIRE PRO</h2>
+          <p>Plateforme unifiée avec partie administrative, comptes utilisateurs simples, création de compte, suivi des opérations et fonctions CRUD sur les modules clés. propre pour Saint Paul de Kolwezi</p>
+          <div class="hero-meta">🔐 Authentification • 👥 Multi-rôles • 🛰️ Supervision distante</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary admin-only-inline" onclick="openEntityModal('student')">+ Élève</button>
+          <button class="btn btn-secondary admin-only-inline" onclick="openEntityModal('teacher')">+ Enseignant</button>
+          <button class="btn btn-secondary admin-only-inline" onclick="openEntityModal('class')">+ Classe</button>
+          <button class="btn btn-secondary" onclick="openMessageModal()">+ Message</button>
+        </div>
+      </section>
+
+      <section id="dashboard" class="view">
+        <div class="grid-4">
+          <div class="card stat-card"><div class="label">Élèves</div><div class="value" id="statStudents">0</div><div class="meta positive">Base scolaire active</div></div>
+          <div class="card stat-card"><div class="label">Enseignants</div><div class="value" id="statTeachers">0</div><div class="meta positive">Personnel suivi</div></div>
+          <div class="card stat-card"><div class="label">Comptes utilisateurs</div><div class="value" id="statUsers">0</div><div class="meta warning">Gestion des accès</div></div>
+          <div class="card stat-card"><div class="label">Recettes</div><div class="value" id="statRevenue">0 FCFA</div><div class="meta positive">Paiements enregistrés</div></div>
+        </div>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card">
+            <div class="section-header" style="margin-top:0;">
+              <div>
+                <h3>Performance globale</h3>
+                <p>Vision 1.0</p>
+              </div>
+            </div>
+            <div class="grid-3">
+              <div style="text-align:center;">
+                <div class="kpi"><span id="kpiAttendance">0%</span></div>
+                <strong>Présence</strong>
+              </div>
+              <div style="text-align:center;">
+                <div class="kpi" style="background: conic-gradient(var(--success) 0 78%, #e2e8f0 78% 100%);"><span id="kpiPayment">0%</span></div>
+                <strong>Frais réglés</strong>
+              </div>
+              <div style="text-align:center;">
+                <div class="kpi" style="background: conic-gradient(var(--warning) 0 68%, #e2e8f0 68% 100%);"><span id="kpiAccess">0</span></div>
+                <strong>Accès</strong>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Alertes prioritaires</h3>
+            <div id="dashboardAlerts" class="list"></div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card">
+            <h3 class="panel-title">Activités récentes</h3>
+            <div id="activitiesList" class="list"></div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Résumé des rôles</h3>
+            <div id="roleSummary" class="list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="students" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Gestion des élèves</h3>
+            <p>CRUD complet : ajout, modification, suppression et consultation</p>
+          </div>
+          <div class="toolbar">
+            <input id="studentSearch" class="input search-box" placeholder="Rechercher un élève" oninput="renderStudents()" />
+            <button class="btn btn-primary admin-only-inline" onclick="openEntityModal('student')">Ajouter</button>
+          </div>
+        </div>
+        <div class="card"><div style="overflow:auto;"><table><thead><tr><th>Nom</th><th>Classe</th><th>Présence</th><th>Paiement</th><th>Tuteur</th><th>Actions</th></tr></thead><tbody id="studentsTable"></tbody></table></div></div>
+      </section>
+
+      <section id="teachers" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Gestion des enseignants</h3>
+            <p>CRUD complet du personnel éducatif</p>
+          </div>
+          <div class="toolbar">
+            <input id="teacherSearch" class="input search-box" placeholder="Rechercher un enseignant" oninput="renderTeachers()" />
+            <button class="btn btn-primary" onclick="openEntityModal('teacher')">Ajouter</button>
+          </div>
+        </div>
+        <div class="card"><div style="overflow:auto;"><table><thead><tr><th>Nom</th><th>Matière</th><th>Téléphone</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="teachersTable"></tbody></table></div></div>
+      </section>
+
+      <section id="classes" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Gestion des classes</h3>
+            <p>CRUD complet des classes et affectations</p>
+          </div>
+          <div class="toolbar">
+            <input id="classSearch" class="input search-box" placeholder="Rechercher une classe" oninput="renderClasses()" />
+            <button class="btn btn-primary admin-only-inline" onclick="openEntityModal('class')">Ajouter</button>
+          </div>
+        </div>
+        <div id="classesCards" class="grid-3"></div>
+      </section>
+
+      <section id="attendance" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Présences</h3>
+            <p>CRUD complet des enregistrements de présence</p>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-primary" onclick="openAttendanceModal()">Ajouter un enregistrement</button>
+            <button class="btn btn-secondary" onclick="markAllPresent()">Tout marquer présent</button>
+          </div>
+        </div>
+        <div class="card"><div style="overflow:auto;"><table><thead><tr><th>Date</th><th>Élève</th><th>Classe</th><th>Statut</th><th>Remarque</th><th>Actions</th></tr></thead><tbody id="attendanceTable"></tbody></table></div></div>
+      </section>
+
+      <section id="finance" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Finances</h3>
+            <p>CRUD complet des paiements et du suivi financier</p>
+          </div>
+          <button class="btn btn-primary" onclick="openPaymentModal()">Ajouter un paiement</button>
+        </div>
+        <div class="grid-2">
+          <div class="card"><h3 class="panel-title">Résumé financier</h3><div id="financeSummary" class="list"></div></div>
+          <div class="card"><h3 class="panel-title">Paiements</h3><div id="paymentsList" class="list"></div></div>
+        </div>
+      </section>
+
+      <section id="messages" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Messagerie</h3>
+            <p>Messages internes avec ajout, modification et suppression</p>
+          </div>
+          <div class="toolbar"><button class="btn btn-primary" onclick="openMessageModal()">Nouveau message</button></div>
+        </div>
+        <div class="card"><div id="messagesList" class="list"></div></div>
+      </section>
+
+      <section id="users" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Administration des utilisateurs</h3>
+            <p>Comptes, rôles et accès de l’application</p>
+          </div>
+          <div class="toolbar">
+            <input id="userSearch" class="input search-box" placeholder="Rechercher un compte" oninput="renderUsers()" />
+            <button class="btn btn-primary" onclick="openUserModal()">Créer un compte</button>
+          </div>
+        </div>
+        <div class="card"><div style="overflow:auto;"><table><thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Statut</th><th>Créé le</th><th>Actions</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
+      </section>
+
+      <section id="remote" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Supervision administrative à distance</h3>
+            <p>Audit, contrôles et journal des opérations</p>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <h3 class="panel-title">Console distante</h3>
+            <div class="list">
+              <div class="list-item"><strong>État plateforme</strong><div><span class="badge badge-success">En ligne</span></div></div>
+              <div class="list-item"><strong>Sessions autorisées</strong><div class="muted" id="remoteSessions">0</div></div>
+              <div class="list-item"><strong>Dernière synchronisation</strong><div class="muted" id="lastSync">—</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Audit prioritaire</h3>
+            <div id="auditList" class="list"></div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Actions rapides</h3>
+            <div class="list">
+              <div class="list-item"><button class="btn btn-secondary w-full" onclick="simulateSync()">Forcer la synchronisation</button></div>
+              <div class="list-item"><button class="btn btn-secondary w-full" onclick="broadcastNotice()">Annonce générale</button></div>
+              <div class="list-item"><button class="btn btn-danger w-full" onclick="lockFinanceModule()">Verrouiller la finance</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:18px;"><h3 class="panel-title">Journal de supervision</h3><div id="supervisionLog" class="list"></div></div>
+      </section>
+
+      <section id="profile" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Mon compte</h3>
+            <p>Profil utilisateur et sécurité personnelle</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="form-grid">
+              <div><label>Nom complet</label><input id="profileName" class="input" /></div>
+              <div><label>Email</label><input id="profileEmail" class="input" /></div>
+              <div><label>Rôle</label><input id="profileRole" class="input" disabled /></div>
+              <div><label>Nouveau mot de passe</label><input id="profilePassword" type="password" class="input" placeholder="Laisser vide pour garder l'actuel" /></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-primary" onclick="saveProfile()">Mettre à jour mon compte</button></div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Mes informations</h3>
+            <div id="profileSummary" class="list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="view hidden">
+        <div class="section-header">
+          <div>
+            <h3>Paramètres administratifs</h3>
+            <p>Configuration générale de l’établissement</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="form-grid">
+              <div><label>Nom de l’école</label><input id="schoolName" class="input" /></div>
+              <div><label>Ville</label><input id="schoolCity" class="input" /></div>
+              <div><label>Email administratif</label><input id="schoolEmail" class="input" /></div>
+              <div><label>Téléphone</label><input id="schoolPhone" class="input" /></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button></div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Modules activés</h3>
+            <div class="list">
+              <div class="list-item"><strong>Administration</strong><div class="muted">Utilisateurs, rôles, paramètres, supervision.</div></div>
+              <div class="list-item"><strong>Utilisateur simple</strong><div class="muted">Tableau de bord, profil, consultation, messagerie.</div></div>
+              <div class="list-item"><strong>CRUD complet</strong><div class="muted">Élèves, enseignants, classes, présences, paiements, messages et comptes.</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalRoot" class="hidden"></div>
+
+  <script>
+    const demoData = {
+      users: [
+        { id: 1, name: 'Administrateur principal', email: 'admin@edupilot.fr', password: 'admin123', role: 'admin', active: true, createdAt: '2026-08-01' },
+        { id: 2, name: 'Utilisateur simple', email: 'user@edupilot.fr', password: 'user123', role: 'user', active: true, createdAt: '2026-08-02' },
+        { id: 3, name: 'Mme Sarr', email: 'sarr@edupilot.fr', password: 'teacher123', role: 'teacher', active: true, createdAt: '2026-08-02' }
+      ],
+      students: [
+        { id: 101, name: 'Aminata Ndiaye', className: '6e A', guardian: 'M. Ndiaye', payment: 'Payé', feeDue: 120000, feePaid: 120000, attendanceRate: 96 },
+        { id: 102, name: 'Moussa Diallo', className: '5e B', guardian: 'Mme Diallo', payment: 'Partiel', feeDue: 120000, feePaid: 60000, attendanceRate: 71 },
+        { id: 103, name: 'Fatou Ba', className: '3e A', guardian: 'M. Ba', payment: 'Payé', feeDue: 150000, feePaid: 150000, attendanceRate: 89 },
+        { id: 104, name: 'Ibrahima Fall', className: 'Terminale S', guardian: 'Mme Fall', payment: 'Impayé', feeDue: 180000, feePaid: 0, attendanceRate: 83 }
+      ],
+      teachers: [
+        { id: 201, name: 'Mme Sarr', subject: 'Mathématiques', phone: '+221 77 000 11 22', status: 'Active' },
+        { id: 202, name: 'M. Diop', subject: 'Français', phone: '+221 77 000 33 44', status: 'Active' },
+        { id: 203, name: 'Mme Cissé', subject: 'SVT', phone: '+221 77 000 55 66', status: 'Congé' }
+      ],
+      classes: [
+        { id: 301, name: '6e A', level: 'Collège', capacity: 35, studentsCount: 30, teacher: 'Mme Sarr' },
+        { id: 302, name: '5e B', level: 'Collège', capacity: 40, studentsCount: 37, teacher: 'M. Diop' },
+        { id: 303, name: 'Terminale S', level: 'Lycée', capacity: 28, studentsCount: 26, teacher: 'Mme Cissé' }
+      ],
+      attendanceRecords: [
+        { id: 401, date: '2026-08-04', studentId: 101, status: 'Présent', note: 'RAS' },
+        { id: 402, date: '2026-08-04', studentId: 102, status: 'Absent', note: 'Justificatif attendu' },
+        { id: 403, date: '2026-08-04', studentId: 103, status: 'Présent', note: 'RAS' },
+        { id: 404, date: '2026-08-04', studentId: 104, status: 'Retard', note: 'Arrivé à 08:20' }
+      ],
+      payments: [
+        { id: 501, studentId: 101, amount: 120000, mode: 'Mobile Money', date: '2026-07-20' },
+        { id: 502, studentId: 103, amount: 150000, mode: 'Espèces', date: '2026-07-18' },
+        { id: 503, studentId: 102, amount: 60000, mode: 'Virement', date: '2026-07-12' }
+      ],
+      messages: [
+        { id: 601, fromUserId: 1, from: 'Administration', to: 'Parents', subject: 'Réunion de rentrée', body: 'La réunion est prévue vendredi à 10h.', date: '2026-08-04', editableBy: [1] },
+        { id: 602, fromUserId: 1, from: 'Direction', to: 'Enseignants', subject: 'Rapport hebdomadaire', body: 'Merci de déposer les rapports avant 17h.', date: '2026-08-03', editableBy: [1] }
+      ],
+      settings: {
+        schoolName: 'Complexe Scolaire Horizon',
+        schoolCity: 'Dakar',
+        schoolEmail: 'contact@horizon-ecole.sn',
+        schoolPhone: '+221 77 555 22 11'
+      },
+      logs: [
+        'Plateforme initialisée.',
+        'Compte administrateur actif.',
+        'Module de supervision distante prêt.',
+        'Base de démonstration chargée.'
+      ],
+      financeLocked: false,
+      lastSync: '2026-08-04 09:00'
+    };
+
+    let state = loadState();
+    let currentUserId = Number(localStorage.getItem('edupilot-current-user') || 0);
+
+    function structuredCloneFallback(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+    function loadState() {
+      const raw = localStorage.getItem('edupilot-pro-data');
+      return raw ? JSON.parse(raw) : structuredCloneFallback(demoData);
+    }
+    function saveState(skipRender = false) {
+      localStorage.setItem('edupilot-pro-data', JSON.stringify(state));
+      if (!skipRender) renderAll();
+    }
+    function currency(n) {
+      return new Intl.NumberFormat('fr-FR').format(Number(n || 0)) + ' FC';
+    }
+    function currentUser() {
+      return state.users.find(u => u.id === currentUserId) || null;
+    }
+    function hasAdminAccess() {
+      const user = currentUser();
+      return !!user && user.role === 'admin';
+    }
+    function canEditMessage(message) {
+      const user = currentUser();
+      if (!user) return false;
+      return hasAdminAccess() || message.fromUserId === user.id;
+    }
+    function badgeClass(value) {
+      const v = String(value).toLowerCase();
+      if (v.includes('payé') || v.includes('présent') || v.includes('active') || v.includes('actif')) return 'badge badge-success';
+      if (v.includes('partiel') || v.includes('retard') || v.includes('congé') || v.includes('teacher')) return 'badge badge-warning';
+      if (v.includes('admin')) return 'badge badge-purple';
+      return 'badge badge-danger';
+    }
+    function roleLabel(role) {
+      return role === 'admin' ? 'Administrateur' : role === 'teacher' ? 'Enseignant' : 'Utilisateur simple';
+    }
+    function addLog(text) {
+      state.logs.push(text);
+      if (state.logs.length > 40) state.logs = state.logs.slice(-40);
+      state.lastSync = new Date().toLocaleString('fr-FR');
+      saveState();
+    }
+    function getStudentName(studentId) {
+      return state.students.find(s => s.id === Number(studentId))?.name || 'Élève inconnu';
+    }
+    function getStudent(studentId) {
+      return state.students.find(s => s.id === Number(studentId));
+    }
+    function updateStudentFinancialStatus(student) {
+      if (!student) return;
+      student.payment = student.feePaid >= student.feeDue ? 'Payé' : student.feePaid > 0 ? 'Partiel' : 'Impayé';
+    }
+    function getStudentAttendanceStatus(studentId) {
+      const records = state.attendanceRecords.filter(r => r.studentId === Number(studentId));
+      if (!records.length) return 'Non renseigné';
+      return records.slice().sort((a,b) => b.id - a.id)[0].status;
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+      document.getElementById('loginPane').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('registerPane').classList.toggle('hidden', tab !== 'register');
+    }
+
+    function login() {
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value;
+      const user = state.users.find(u => u.email.toLowerCase() === email && u.password === password && u.active);
+      if (!user) return alert('Identifiants invalides ou compte désactivé.');
+      currentUserId = user.id;
+      localStorage.setItem('edupilot-current-user', String(user.id));
+      document.getElementById('loginOverlay').classList.add('hidden');
+      addLog(`Connexion réussie : ${user.name} (${roleLabel(user.role)}).`);
+      applyRoleVisibility();
+      renderAll();
+    }
+
+    function registerUser() {
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const password = document.getElementById('regPassword').value.trim();
+      const role = document.getElementById('regRole').value;
+      if (!name || !email || !password) return alert('Veuillez remplir tous les champs.');
+      if (state.users.some(u => u.email.toLowerCase() === email)) return alert('Cet email existe déjà.');
+      const newUser = { id: Date.now(), name, email, password, role, active: true, createdAt: new Date().toISOString().slice(0,10) };
+      state.users.push(newUser);
+      saveState(true);
+      alert('Compte créé avec succès. Vous pouvez vous connecter.');
+      document.getElementById('regName').value = '';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('regPassword').value = '';
+      switchAuthTab('login');
+      addLog(`Nouveau compte créé : ${name} (${roleLabel(role)}).`);
+    }
+
+    function logout() {
+      localStorage.removeItem('edupilot-current-user');
+      currentUserId = 0;
+      document.getElementById('loginOverlay').classList.remove('hidden');
+      switchAuthTab('login');
+    }
+
+    function applyRoleVisibility() {
+      const user = currentUser();
+      const admin = !!user && user.role === 'admin';
+      document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden-role', !admin));
+      document.querySelectorAll('.admin-only-inline').forEach(el => el.classList.toggle('hidden', !admin));
+      document.getElementById('sidebarUserName').textContent = user ? user.name : 'Non connecté';
+      document.getElementById('sidebarUserRole').textContent = user ? roleLabel(user.role) : 'Rôle';
+      document.getElementById('sidebarRoleBadge').textContent = user ? roleLabel(user.role) : 'Session';
+      if (!admin && ['teachers','attendance','finance','users','remote','settings'].includes(activeView())) {
+        switchView('dashboard');
+      }
+    }
+
+    function activeView() {
+      return document.querySelector('.view:not(.hidden)')?.id || 'dashboard';
+    }
+    function switchView(viewId) {
+      if (!hasAdminAccess() && ['teachers','attendance','finance','users','remote','settings'].includes(viewId)) viewId = 'dashboard';
+      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+      document.getElementById(viewId).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn[data-view]').forEach(btn => btn.classList.toggle('active', btn.dataset.view === viewId));
+    }
+    document.querySelectorAll('.nav-btn[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+
+    function renderDashboard() {
+      document.getElementById('statStudents').textContent = state.students.length;
+      document.getElementById('statTeachers').textContent = state.teachers.length;
+      document.getElementById('statUsers').textContent = state.users.length;
+      const totalPaid = state.students.reduce((a,s) => a + Number(s.feePaid || 0), 0);
+      const totalDue = state.students.reduce((a,s) => a + Number(s.feeDue || 0), 0);
+      document.getElementById('statRevenue').textContent = currency(totalPaid);
+      const attendanceAvg = Math.round(state.students.reduce((a,s) => a + Number(s.attendanceRate || 0), 0) / (state.students.length || 1));
+      const paymentRate = totalDue ? Math.round((totalPaid / totalDue) * 100) : 0;
+      document.getElementById('kpiAttendance').textContent = attendanceAvg + '%';
+      document.getElementById('kpiPayment').textContent = paymentRate + '%';
+      document.getElementById('kpiAccess').textContent = state.users.filter(u => u.active).length;
+
+      const alerts = [];
+      const unpaid = state.students.filter(s => s.payment !== 'Payé').length;
+      const absent = state.attendanceRecords.filter(r => r.status === 'Absent').length;
+      const inactiveUsers = state.users.filter(u => !u.active).length;
+      if (unpaid) alerts.push({ title: 'Suivi financier', text: `${unpaid} élève(s) ont un statut de paiement incomplet.`, badge: 'Attention', cls: 'badge-warning' });
+      if (absent) alerts.push({ title: 'Absences du jour', text: `${absent} absence(s) enregistrée(s).`, badge: 'Urgent', cls: 'badge-danger' });
+      alerts.push({ title: 'Comptes actifs', text: `${state.users.filter(u => u.active).length} compte(s) actif(s) dans le système.`, badge: 'Info', cls: 'badge-info' });
+      if (inactiveUsers) alerts.push({ title: 'Comptes désactivés', text: `${inactiveUsers} compte(s) sont actuellement désactivés.`, badge: 'Audit', cls: 'badge-purple' });
+      document.getElementById('dashboardAlerts').innerHTML = alerts.map(a => `<div class="list-item"><strong>${a.title}</strong><div class="muted">${a.text}</div><div style="margin-top:8px;"><span class="badge ${a.cls}">${a.badge}</span></div></div>`).join('');
+
+      document.getElementById('activitiesList').innerHTML = state.logs.slice().reverse().slice(0,8).map(log => `<div class="list-item"><strong>Journal</strong><div class="muted">${log}</div></div>`).join('');
+
+      const roles = ['admin','teacher','user'];
+      document.getElementById('roleSummary').innerHTML = roles.map(role => {
+        const count = state.users.filter(u => u.role === role).length;
+        return `<div class="list-item"><strong>${roleLabel(role)}</strong><div class="muted">${count} compte(s)</div></div>`;
+      }).join('');
+    }
+
+    function renderStudents() {
+      const q = (document.getElementById('studentSearch')?.value || '').toLowerCase();
+      const rows = state.students.filter(s => s.name.toLowerCase().includes(q) || s.className.toLowerCase().includes(q) || s.guardian.toLowerCase().includes(q));
+      const admin = hasAdminAccess();
+      document.getElementById('studentsTable').innerHTML = rows.map(s => `
+        <tr>
+          <td data-label="Nom"><strong>${s.name}</strong></td>
+          <td data-label="Classe">${s.className}</td>
+          <td data-label="Présence"><span class="${badgeClass(getStudentAttendanceStatus(s.id))}">${getStudentAttendanceStatus(s.id)}</span><div class="muted">${s.attendanceRate}%</div></td>
+          <td data-label="Paiement"><span class="${badgeClass(s.payment)}">${s.payment}</span><div class="muted">${currency(s.feePaid)} / ${currency(s.feeDue)}</div></td>
+          <td data-label="Tuteur">${s.guardian}</td>
+          <td data-label="Actions">${admin ? `<button class="btn btn-secondary" onclick="openEntityModal('student', ${s.id})">Modifier</button> <button class="btn btn-danger" onclick="deleteEntity('student', ${s.id})">Supprimer</button>` : `<span class="muted">Lecture seule</span>`}</td>
+        </tr>`).join('');
+    }
+
+    function renderTeachers() {
+      const q = (document.getElementById('teacherSearch')?.value || '').toLowerCase();
+      const rows = state.teachers.filter(t => t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q));
+      document.getElementById('teachersTable').innerHTML = rows.map(t => `
+        <tr>
+          <td data-label="Nom"><strong>${t.name}</strong></td>
+          <td data-label="Matière">${t.subject}</td>
+          <td data-label="Téléphone">${t.phone}</td>
+          <td data-label="Statut"><span class="${badgeClass(t.status)}">${t.status}</span></td>
+          <td data-label="Actions"><button class="btn btn-secondary" onclick="openEntityModal('teacher', ${t.id})">Modifier</button> <button class="btn btn-danger" onclick="deleteEntity('teacher', ${t.id})">Supprimer</button></td>
+        </tr>`).join('');
+    }
+
+    function renderClasses() {
+      const q = (document.getElementById('classSearch')?.value || '').toLowerCase();
+      const rows = state.classes.filter(c => c.name.toLowerCase().includes(q) || c.level.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q));
+      const admin = hasAdminAccess();
+      document.getElementById('classesCards').innerHTML = rows.map(c => `
+        <div class="card">
+          <h3 class="panel-title">${c.name}</h3>
+          <div class="list">
+            <div class="list-item"><strong>Niveau</strong><div class="muted">${c.level}</div></div>
+            <div class="list-item"><strong>Capacité</strong><div class="muted">${c.studentsCount}/${c.capacity} élèves</div></div>
+            <div class="list-item"><strong>Responsable</strong><div class="muted">${c.teacher}</div></div>
+          </div>
+          <div class="form-actions">${admin ? `<button class="btn btn-secondary" onclick="openEntityModal('class', ${c.id})">Modifier</button><button class="btn btn-danger" onclick="deleteEntity('class', ${c.id})">Supprimer</button>` : `<span class="muted">Consultation</span>`}</div>
+        </div>`).join('');
+    }
+
+    function renderAttendance() {
+      document.getElementById('attendanceTable').innerHTML = state.attendanceRecords.slice().sort((a,b) => b.id - a.id).map(r => {
+        const student = getStudent(r.studentId);
+        return `
+        <tr>
+          <td data-label="Date">${r.date}</td>
+          <td data-label="Élève"><strong>${student?.name || 'Inconnu'}</strong></td>
+          <td data-label="Classe">${student?.className || '—'}</td>
+          <td data-label="Statut"><span class="${badgeClass(r.status)}">${r.status}</span></td>
+          <td data-label="Remarque">${r.note || '—'}</td>
+          <td data-label="Actions"><button class="btn btn-secondary" onclick="openAttendanceModal(${r.id})">Modifier</button> <button class="btn btn-danger" onclick="deleteEntity('attendance', ${r.id})">Supprimer</button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderFinance() {
+      const totalPaid = state.students.reduce((a,s) => a + Number(s.feePaid || 0), 0);
+      const totalDue = state.students.reduce((a,s) => a + Number(s.feeDue || 0), 0);
+      const pending = totalDue - totalPaid;
+      document.getElementById('financeSummary').innerHTML = `
+        <div class="list-item"><strong>Total encaissé</strong><div class="muted">${currency(totalPaid)}</div></div>
+        <div class="list-item"><strong>Total attendu</strong><div class="muted">${currency(totalDue)}</div></div>
+        <div class="list-item"><strong>Reste à recouvrer</strong><div class="muted">${currency(pending)}</div></div>
+        <div class="list-item"><strong>Module</strong><div class="muted">${state.financeLocked ? 'Verrouillé pour audit' : 'Ouvert'}</div></div>`;
+      document.getElementById('paymentsList').innerHTML = state.payments.slice().sort((a,b) => b.id - a.id).map(p => `
+        <div class="list-item">
+          <strong>${getStudentName(p.studentId)}</strong>
+          <div class="muted">${currency(p.amount)} • ${p.mode} • ${p.date}</div>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="openPaymentModal(${p.id})">Modifier</button>
+            <button class="btn btn-danger" onclick="deleteEntity('payment', ${p.id})">Supprimer</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function renderMessages() {
+      const user = currentUser();
+      const items = hasAdminAccess() ? state.messages : state.messages.filter(m => m.fromUserId === user.id || m.to === 'Tous' || m.to === 'Parents' || m.to === 'Enseignants');
+      document.getElementById('messagesList').innerHTML = items.slice().sort((a,b) => b.id - a.id).map(m => `
+        <div class="list-item">
+          <strong>${m.subject}</strong>
+          <div class="muted">De ${m.from} vers ${m.to} • ${m.date}</div>
+          <div style="margin-top:8px;">${m.body}</div>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">${canEditMessage(m) ? `<button class="btn btn-secondary" onclick="openMessageModal(${m.id})">Modifier</button><button class="btn btn-danger" onclick="deleteEntity('message', ${m.id})">Supprimer</button>` : `<span class="muted">Lecture seule</span>`}</div>
+        </div>`).join('');
+    }
+
+    function renderUsers() {
+      const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
+      const rows = state.users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || roleLabel(u.role).toLowerCase().includes(q));
+      document.getElementById('usersTable').innerHTML = rows.map(u => `
+        <tr>
+          <td data-label="Nom"><strong>${u.name}</strong></td>
+          <td data-label="Email">${u.email}</td>
+          <td data-label="Rôle"><span class="${badgeClass(u.role)}">${roleLabel(u.role)}</span></td>
+          <td data-label="Statut"><span class="${u.active ? 'badge badge-success' : 'badge badge-danger'}">${u.active ? 'Actif' : 'Désactivé'}</span></td>
+          <td data-label="Créé le">${u.createdAt}</td>
+          <td data-label="Actions"><button class="btn btn-secondary" onclick="openUserModal(${u.id})">Modifier</button> <button class="btn btn-danger" onclick="deleteEntity('user', ${u.id})">Supprimer</button></td>
+        </tr>`).join('');
+    }
+
+    function renderRemote() {
+      document.getElementById('remoteSessions').textContent = `${Math.max(2, state.users.filter(u => u.active).length)} session(s) autorisée(s)`;
+      document.getElementById('lastSync').textContent = state.lastSync || '—';
+      document.getElementById('auditList').innerHTML = [
+        `${state.students.filter(s => s.payment !== 'Payé').length} dossier(s) de paiement à surveiller`,
+        `${state.attendanceRecords.filter(r => r.status === 'Absent').length} absence(s) déclarée(s)`,
+        `${state.users.filter(u => !u.active).length} compte(s) désactivé(s)`
+      ].map(item => `<div class="list-item"><strong>Audit</strong><div class="muted">${item}</div></div>`).join('');
+      document.getElementById('supervisionLog').innerHTML = state.logs.slice().reverse().map(log => `<div class="list-item"><strong>Événement</strong><div class="muted">${log}</div></div>`).join('');
+    }
+
+    function renderSettings() {
+      document.getElementById('schoolName').value = state.settings.schoolName;
+      document.getElementById('schoolCity').value = state.settings.schoolCity;
+      document.getElementById('schoolEmail').value = state.settings.schoolEmail;
+      document.getElementById('schoolPhone').value = state.settings.schoolPhone;
+    }
+
+    function renderProfile() {
+      const user = currentUser();
+      if (!user) return;
+      document.getElementById('profileName').value = user.name;
+      document.getElementById('profileEmail').value = user.email;
+      document.getElementById('profileRole').value = roleLabel(user.role);
+      document.getElementById('profilePassword').value = '';
+      document.getElementById('profileSummary').innerHTML = `
+        <div class="list-item"><strong>Nom</strong><div class="muted">${user.name}</div></div>
+        <div class="list-item"><strong>Email</strong><div class="muted">${user.email}</div></div>
+        <div class="list-item"><strong>Rôle</strong><div class="muted">${roleLabel(user.role)}</div></div>
+        <div class="list-item"><strong>Compte</strong><div class="muted">${user.active ? 'Actif' : 'Désactivé'}</div></div>`;
+    }
+
+    function renderAll() {
+      applyRoleVisibility();
+      renderDashboard();
+      renderStudents();
+      if (hasAdminAccess()) {
+        renderTeachers();
+        renderAttendance();
+        renderFinance();
+        renderUsers();
+        renderRemote();
+        renderSettings();
+      }
+      renderMessages();
+      renderClasses();
+      renderProfile();
+    }
+
+    function openModal(content) {
+      const root = document.getElementById('modalRoot');
+      root.innerHTML = `<div class="modal"><div class="modal-card">${content}</div></div>`;
+      root.classList.remove('hidden');
+    }
+    function closeModal() {
+      const root = document.getElementById('modalRoot');
+      root.classList.add('hidden');
+      root.innerHTML = '';
+    }
+
+    function openEntityModal(type, id = null) {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      let item = null;
+      let title = '';
+      let fields = '';
+      if (type === 'student') {
+        item = state.students.find(x => x.id === id) || { name: '', className: '', guardian: '', feeDue: 120000, feePaid: 0, attendanceRate: 100 };
+        title = id ? 'Modifier l’élève' : 'Ajouter un élève';
+        fields = `
+          <div><label>Nom complet</label><input id="e_name" class="input" value="${item.name || ''}" /></div>
+          <div><label>Classe</label><input id="e_class" class="input" value="${item.className || ''}" /></div>
+          <div><label>Tuteur</label><input id="e_guardian" class="input" value="${item.guardian || ''}" /></div>
+          <div><label>Taux de présence</label><input id="e_attendanceRate" type="number" class="input" value="${item.attendanceRate || 0}" /></div>
+          <div><label>Montant dû</label><input id="e_feeDue" type="number" class="input" value="${item.feeDue || 0}" /></div>
+          <div><label>Montant payé</label><input id="e_feePaid" type="number" class="input" value="${item.feePaid || 0}" /></div>`;
+      } else if (type === 'teacher') {
+        item = state.teachers.find(x => x.id === id) || { name: '', subject: '', phone: '', status: 'Active' };
+        title = id ? 'Modifier l’enseignant' : 'Ajouter un enseignant';
+        fields = `
+          <div><label>Nom complet</label><input id="e_name" class="input" value="${item.name || ''}" /></div>
+          <div><label>Matière</label><input id="e_subject" class="input" value="${item.subject || ''}" /></div>
+          <div><label>Téléphone</label><input id="e_phone" class="input" value="${item.phone || ''}" /></div>
+          <div><label>Statut</label><select id="e_status"><option ${item.status==='Active'?'selected':''}>Active</option><option ${item.status==='Congé'?'selected':''}>Congé</option></select></div>`;
+      } else if (type === 'class') {
+        item = state.classes.find(x => x.id === id) || { name: '', level: '', capacity: 30, studentsCount: 0, teacher: '' };
+        title = id ? 'Modifier la classe' : 'Ajouter une classe';
+        fields = `
+          <div><label>Nom de la classe</label><input id="e_name" class="input" value="${item.name || ''}" /></div>
+          <div><label>Niveau</label><input id="e_level" class="input" value="${item.level || ''}" /></div>
+          <div><label>Capacité</label><input id="e_capacity" type="number" class="input" value="${item.capacity || 0}" /></div>
+          <div><label>Effectif actuel</label><input id="e_studentsCount" type="number" class="input" value="${item.studentsCount || 0}" /></div>
+          <div style="grid-column:1/-1;"><label>Professeur principal</label><input id="e_teacher" class="input" value="${item.teacher || ''}" /></div>`;
+      }
+      openModal(`
+        <div class="modal-header">
+          <div><h3 style="margin:0;">${title}</h3><p class="muted" style="margin:6px 0 0;">CRUD ${type}</p></div>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div class="form-grid">${fields}</div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button class="btn btn-primary" onclick="submitEntity('${type}', ${id || 'null'})">Enregistrer</button>
+        </div>`);
+    }
+
+    function submitEntity(type, id = null) {
+      if (type === 'student') {
+        const item = id ? state.students.find(x => x.id === id) : { id: Date.now() };
+        item.name = document.getElementById('e_name').value.trim();
+        item.className = document.getElementById('e_class').value.trim();
+        item.guardian = document.getElementById('e_guardian').value.trim();
+        item.attendanceRate = Number(document.getElementById('e_attendanceRate').value || 0);
+        item.feeDue = Number(document.getElementById('e_feeDue').value || 0);
+        item.feePaid = Number(document.getElementById('e_feePaid').value || 0);
+        updateStudentFinancialStatus(item);
+        if (!id) state.students.push(item);
+        addLog(`${id ? 'Mise à jour' : 'Création'} de l’élève ${item.name}.`);
+      }
+      if (type === 'teacher') {
+        const item = id ? state.teachers.find(x => x.id === id) : { id: Date.now() };
+        item.name = document.getElementById('e_name').value.trim();
+        item.subject = document.getElementById('e_subject').value.trim();
+        item.phone = document.getElementById('e_phone').value.trim();
+        item.status = document.getElementById('e_status').value;
+        if (!id) state.teachers.push(item);
+        addLog(`${id ? 'Mise à jour' : 'Création'} de l’enseignant ${item.name}.`);
+      }
+      if (type === 'class') {
+        const item = id ? state.classes.find(x => x.id === id) : { id: Date.now() };
+        item.name = document.getElementById('e_name').value.trim();
+        item.level = document.getElementById('e_level').value.trim();
+        item.capacity = Number(document.getElementById('e_capacity').value || 0);
+        item.studentsCount = Number(document.getElementById('e_studentsCount').value || 0);
+        item.teacher = document.getElementById('e_teacher').value.trim();
+        if (!id) state.classes.push(item);
+        addLog(`${id ? 'Mise à jour' : 'Création'} de la classe ${item.name}.`);
+      }
+      closeModal();
+      saveState();
+    }
+
+    function openAttendanceModal(id = null) {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      const item = state.attendanceRecords.find(x => x.id === id) || { date: '2026-08-04', studentId: state.students[0]?.id || '', status: 'Présent', note: '' };
+      openModal(`
+        <div class="modal-header">
+          <div><h3 style="margin:0;">${id ? 'Modifier' : 'Ajouter'} une présence</h3><p class="muted" style="margin:6px 0 0;">CRUD présence</p></div>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div class="form-grid">
+          <div><label>Date</label><input id="a_date" type="date" class="input" value="${item.date}" /></div>
+          <div><label>Élève</label><select id="a_student">${state.students.map(s => `<option value="${s.id}" ${Number(item.studentId)===s.id?'selected':''}>${s.name}</option>`).join('')}</select></div>
+          <div><label>Statut</label><select id="a_status"><option ${item.status==='Présent'?'selected':''}>Présent</option><option ${item.status==='Retard'?'selected':''}>Retard</option><option ${item.status==='Absent'?'selected':''}>Absent</option></select></div>
+          <div><label>Remarque</label><input id="a_note" class="input" value="${item.note || ''}" /></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Annuler</button><button class="btn btn-primary" onclick="submitAttendance(${id || 'null'})">Enregistrer</button></div>`);
+    }
+
+    function submitAttendance(id = null) {
+      const item = id ? state.attendanceRecords.find(x => x.id === id) : { id: Date.now() };
+      item.date = document.getElementById('a_date').value;
+      item.studentId = Number(document.getElementById('a_student').value);
+      item.status = document.getElementById('a_status').value;
+      item.note = document.getElementById('a_note').value.trim();
+      if (!id) state.attendanceRecords.push(item);
+      const student = getStudent(item.studentId);
+      if (student) {
+        if (item.status === 'Présent') student.attendanceRate = Math.min(100, Number(student.attendanceRate || 0) + 1);
+        if (item.status === 'Absent') student.attendanceRate = Math.max(0, Number(student.attendanceRate || 0) - 3);
+      }
+      closeModal();
+      addLog(`${id ? 'Mise à jour' : 'Ajout'} d’une présence pour ${getStudentName(item.studentId)}.`);
+    }
+
+    function openPaymentModal(id = null) {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      if (state.financeLocked) return alert('Le module finance est verrouillé pour audit.');
+      const item = state.payments.find(x => x.id === id) || { studentId: state.students[0]?.id || '', amount: 50000, mode: 'Espèces', date: '2026-08-04' };
+      openModal(`
+        <div class="modal-header">
+          <div><h3 style="margin:0;">${id ? 'Modifier' : 'Ajouter'} un paiement</h3><p class="muted" style="margin:6px 0 0;">CRUD paiement</p></div>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div class="form-grid">
+          <div><label>Élève</label><select id="p_student">${state.students.map(s => `<option value="${s.id}" ${Number(item.studentId)===s.id?'selected':''}>${s.name}</option>`).join('')}</select></div>
+          <div><label>Montant</label><input id="p_amount" type="number" class="input" value="${item.amount || 0}" /></div>
+          <div><label>Mode</label><select id="p_mode"><option ${item.mode==='Espèces'?'selected':''}>Espèces</option><option ${item.mode==='Virement'?'selected':''}>Virement</option><option ${item.mode==='Mobile Money'?'selected':''}>Mobile Money</option></select></div>
+          <div><label>Date</label><input id="p_date" type="date" class="input" value="${item.date}" /></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Annuler</button><button class="btn btn-primary" onclick="submitPayment(${id || 'null'})">Enregistrer</button></div>`);
+    }
+
+    function recomputeStudentPaid(studentId) {
+      const student = getStudent(studentId);
+      if (!student) return;
+      student.feePaid = state.payments.filter(p => p.studentId === Number(studentId)).reduce((a,p) => a + Number(p.amount || 0), 0);
+      updateStudentFinancialStatus(student);
+    }
+
+    function submitPayment(id = null) {
+      const old = id ? state.payments.find(x => x.id === id) : null;
+      const item = old || { id: Date.now() };
+      const previousStudentId = old ? old.studentId : null;
+      item.studentId = Number(document.getElementById('p_student').value);
+      item.amount = Number(document.getElementById('p_amount').value || 0);
+      item.mode = document.getElementById('p_mode').value;
+      item.date = document.getElementById('p_date').value;
+      if (!id) state.payments.push(item);
+      if (previousStudentId) recomputeStudentPaid(previousStudentId);
+      recomputeStudentPaid(item.studentId);
+      closeModal();
+      addLog(`${id ? 'Mise à jour' : 'Ajout'} d’un paiement pour ${getStudentName(item.studentId)}.`);
+    }
+
+    function openMessageModal(id = null) {
+      const user = currentUser();
+      const item = state.messages.find(x => x.id === id) || { fromUserId: user.id, from: user.name, to: hasAdminAccess() ? 'Parents' : 'Administration', subject: '', body: '', date: '2026-08-04' };
+      if (id && !canEditMessage(item)) return alert('Vous ne pouvez pas modifier ce message.');
+      openModal(`
+        <div class="modal-header">
+          <div><h3 style="margin:0;">${id ? 'Modifier' : 'Créer'} un message</h3><p class="muted" style="margin:6px 0 0;">Messagerie interne</p></div>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div class="form-grid">
+          <div><label>Expéditeur</label><input id="m_from" class="input" value="${item.from || user.name}" ${hasAdminAccess() ? '' : 'disabled'} /></div>
+          <div><label>Destinataire</label><select id="m_to"><option ${item.to==='Administration'?'selected':''}>Administration</option><option ${item.to==='Parents'?'selected':''}>Parents</option><option ${item.to==='Enseignants'?'selected':''}>Enseignants</option><option ${item.to==='Tous'?'selected':''}>Tous</option></select></div>
+          <div style="grid-column:1/-1;"><label>Objet</label><input id="m_subject" class="input" value="${item.subject || ''}" /></div>
+          <div style="grid-column:1/-1;"><label>Message</label><textarea id="m_body">${item.body || ''}</textarea></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Annuler</button><button class="btn btn-primary" onclick="submitMessage(${id || 'null'})">Enregistrer</button></div>`);
+    }
+
+    function submitMessage(id = null) {
+      const user = currentUser();
+      const item = id ? state.messages.find(x => x.id === id) : { id: Date.now(), fromUserId: user.id };
+      item.fromUserId = user.id;
+      item.from = hasAdminAccess() ? document.getElementById('m_from').value.trim() : user.name;
+      item.to = document.getElementById('m_to').value;
+      item.subject = document.getElementById('m_subject').value.trim();
+      item.body = document.getElementById('m_body').value.trim();
+      item.date = '2026-08-04';
+      if (!id) state.messages.push(item);
+      closeModal();
+      addLog(`${id ? 'Mise à jour' : 'Création'} du message « ${item.subject} ».`);
+    }
+
+    function openUserModal(id = null) {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      const item = state.users.find(x => x.id === id) || { name: '', email: '', password: '', role: 'user', active: true, createdAt: '2026-08-04' };
+      openModal(`
+        <div class="modal-header">
+          <div><h3 style="margin:0;">${id ? 'Modifier' : 'Créer'} un compte</h3><p class="muted" style="margin:6px 0 0;">Administration des utilisateurs</p></div>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div class="form-grid">
+          <div><label>Nom complet</label><input id="u_name" class="input" value="${item.name || ''}" /></div>
+          <div><label>Email</label><input id="u_email" class="input" value="${item.email || ''}" /></div>
+          <div><label>Mot de passe</label><input id="u_password" class="input" value="${item.password || ''}" /></div>
+          <div><label>Rôle</label><select id="u_role"><option value="admin" ${item.role==='admin'?'selected':''}>Administrateur</option><option value="teacher" ${item.role==='teacher'?'selected':''}>Enseignant</option><option value="user" ${item.role==='user'?'selected':''}>Utilisateur simple</option></select></div>
+          <div><label>Statut</label><select id="u_active"><option value="true" ${item.active?'selected':''}>Actif</option><option value="false" ${!item.active?'selected':''}>Désactivé</option></select></div>
+          <div><label>Date création</label><input id="u_createdAt" type="date" class="input" value="${item.createdAt || '2026-08-04'}" /></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Annuler</button><button class="btn btn-primary" onclick="submitUser(${id || 'null'})">Enregistrer</button></div>`);
+    }
+
+    function submitUser(id = null) {
+      const email = document.getElementById('u_email').value.trim().toLowerCase();
+      const existing = state.users.find(u => u.email.toLowerCase() === email && u.id !== id);
+      if (existing) return alert('Cet email est déjà utilisé.');
+      const item = id ? state.users.find(x => x.id === id) : { id: Date.now() };
+      item.name = document.getElementById('u_name').value.trim();
+      item.email = email;
+      item.password = document.getElementById('u_password').value.trim();
+      item.role = document.getElementById('u_role').value;
+      item.active = document.getElementById('u_active').value === 'true';
+      item.createdAt = document.getElementById('u_createdAt').value;
+      if (!id) state.users.push(item);
+      closeModal();
+      addLog(`${id ? 'Mise à jour' : 'Création'} du compte ${item.email}.`);
+    }
+
+    function saveProfile() {
+      const user = currentUser();
+      if (!user) return;
+      const email = document.getElementById('profileEmail').value.trim().toLowerCase();
+      const duplicate = state.users.find(u => u.email.toLowerCase() === email && u.id !== user.id);
+      if (duplicate) return alert('Cet email est déjà utilisé.');
+      user.name = document.getElementById('profileName').value.trim();
+      user.email = email;
+      const pwd = document.getElementById('profilePassword').value.trim();
+      if (pwd) user.password = pwd;
+      addLog(`Profil mis à jour : ${user.name}.`);
+    }
+
+    function saveSettings() {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      state.settings.schoolName = document.getElementById('schoolName').value.trim();
+      state.settings.schoolCity = document.getElementById('schoolCity').value.trim();
+      state.settings.schoolEmail = document.getElementById('schoolEmail').value.trim();
+      state.settings.schoolPhone = document.getElementById('schoolPhone').value.trim();
+      addLog('Paramètres administratifs enregistrés.');
+    }
+
+    function markAllPresent() {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      const today = '2026-08-04';
+      state.students.forEach(student => {
+        state.attendanceRecords.push({ id: Date.now() + Math.floor(Math.random()*1000), date: today, studentId: student.id, status: 'Présent', note: 'Marquage global' });
+        student.attendanceRate = Math.min(100, Number(student.attendanceRate || 0) + 1);
+      });
+      addLog('Tous les élèves ont été marqués présents.');
+    }
+
+    function simulateSync() {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      state.lastSync = new Date().toLocaleString('fr-FR');
+      addLog('Synchronisation forcée depuis la console distante.');
+    }
+
+    function broadcastNotice() {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      state.messages.push({ id: Date.now(), fromUserId: currentUser().id, from: 'Superviseur distant', to: 'Tous', subject: 'Annonce générale', body: 'Veuillez consulter les mises à jour du tableau de bord.', date: '2026-08-04' });
+      addLog('Annonce générale diffusée à tous les utilisateurs.');
+    }
+
+    function lockFinanceModule() {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      state.financeLocked = !state.financeLocked;
+      addLog(`Module finance ${state.financeLocked ? 'verrouillé' : 'déverrouillé'} par l’administrateur.`);
+    }
+
+    function deleteEntity(type, id) {
+      if (!confirm('Confirmer la suppression ?')) return;
+      if (type === 'student') {
+        state.students = state.students.filter(x => x.id !== id);
+        state.attendanceRecords = state.attendanceRecords.filter(x => x.studentId !== id);
+        state.payments = state.payments.filter(x => x.studentId !== id);
+        addLog('Élève supprimé.');
+      }
+      if (type === 'teacher') {
+        state.teachers = state.teachers.filter(x => x.id !== id);
+        addLog('Enseignant supprimé.');
+      }
+      if (type === 'class') {
+        state.classes = state.classes.filter(x => x.id !== id);
+        addLog('Classe supprimée.');
+      }
+      if (type === 'attendance') {
+        state.attendanceRecords = state.attendanceRecords.filter(x => x.id !== id);
+        addLog('Enregistrement de présence supprimé.');
+      }
+      if (type === 'payment') {
+        const payment = state.payments.find(x => x.id === id);
+        state.payments = state.payments.filter(x => x.id !== id);
+        if (payment) recomputeStudentPaid(payment.studentId);
+        addLog('Paiement supprimé.');
+      }
+      if (type === 'message') {
+        const message = state.messages.find(x => x.id === id);
+        if (message && !canEditMessage(message)) return alert('Suppression non autorisée.');
+        state.messages = state.messages.filter(x => x.id !== id);
+        addLog('Message supprimé.');
+      }
+      if (type === 'user') {
+        if (id === currentUserId) return alert('Vous ne pouvez pas supprimer votre propre compte connecté.');
+        state.users = state.users.filter(x => x.id !== id);
+        addLog('Compte utilisateur supprimé.');
+      }
+      saveState();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'edupilot-pro-export.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      addLog('Export des données effectué.');
+    }
+
+    function resetDemo() {
+      if (!hasAdminAccess()) return alert('Accès réservé à l’administrateur.');
+      if (!confirm('Réinitialiser toutes les données de démonstration ?')) return;
+      state = structuredCloneFallback(demoData);
+      localStorage.setItem('edupilot-pro-data', JSON.stringify(state));
+      currentUserId = 1;
+      localStorage.setItem('edupilot-current-user', '1');
+      applyRoleVisibility();
+      renderAll();
+      alert('Démo réinitialisée.');
+    }
+
+    function initializeAuth() {
+      if (currentUser() && currentUser().active) {
+        document.getElementById('loginOverlay').classList.add('hidden');
+      } else {
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        currentUserId = 0;
+      }
+      applyRoleVisibility();
+    }
+
+    initializeAuth();
+    renderAll();
+    if (!currentUserId) switchAuthTab('login');
+  </script>
+</body>
+</html>
